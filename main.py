@@ -4,7 +4,7 @@ import math
 
 # parameter setting
 n = 5               # which SG_n
-p = 0.5             # the probability to release path
+p = 0.92             # the probability to release path
 use_old = False      # whether clean old parameter setting
 
 # function
@@ -47,6 +47,7 @@ def f(k):
     print('(1-p)**6',(1-p)**6)
     data['f'+str(k)] = result
     print('f'+str(k)+'finish')
+    return result
 
 
 def g(k):
@@ -59,6 +60,7 @@ def g(k):
     result = (fp**2)*(gp)/ (1-p)**3 + 2*(fp)*(gp)*(hp)/ (p* (1-p)**2) + (gp**3)/(p* (1-p)**2) + 2*(gp)*(hp**2)/(p**2 * (1-p)) + (gp**2)*(tp)/(p**2 * (1-p)) + (hp**2)*(tp)/p**3
     data['g'+str(k)] = result
     print('g'+str(k)+'finish')
+    return result
 
 
 def h(k):
@@ -71,6 +73,7 @@ def h(k):
     result = (fp)*(gp**2)/(1-p)**3 + (fp)*(hp**2)/(p*(1-p)**2) + 2*(gp**2)*(hp)/(p*(1-p)**2) + (hp**3)/(p**2 * (1-p)) + 2*(gp)*(hp)*(tp)/(p**2 * (1-p)) + (hp)*(tp**2)/p**3
     data['h'+str(k)] = result
     print('h'+str(k)+'finish')
+    return result
 
 
 def t(k):
@@ -82,12 +85,13 @@ def t(k):
     result = (gp**3)/(1-p)**3 + 3*(gp)*(hp**2)/(p * (1-p)**2) + 3*(hp**2)*(tp)/(p**2 * (1-p)) + (tp**3)/p**3
     data['t'+str(k)] = result
     print('t'+str(k)+'finish')
+    return result
 
 def alpha(k):
     global data
     if 'alpha_'+str(k) in data:
         return data['alpha_'+str(k)]
-    fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
+    fp,gp,hp,tp = f(k),g(k),h(k),t(k)
     try:
         result = gp/fp
     except ZeroDivisionError as e:
@@ -96,12 +100,13 @@ def alpha(k):
         return 9999
     data['alpha_'+str(k)] = result
     print('alpha_'+str(k)+'finish')
+    return result
 
 def beta(k):
     global data
     if 'beta_'+str(k) in data:
         return data['beta_'+str(k)]
-    fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
+    fp,gp,hp,tp = f(k),g(k),h(k),t(k)
     try:
         result = hp/gp
     except ZeroDivisionError as e:
@@ -110,12 +115,13 @@ def beta(k):
         return 9999
     data['beta_'+str(k)] = result
     print('beta_'+str(k)+'finish')
+    return result
 
 def gamma(k):
     global data
     if 'gamma_'+str(k) in data:
         return data['gamma_'+str(k)]
-    fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
+    fp,gp,hp,tp = f(k),g(k),h(k),t(k)
     try:
         result = tp/hp
     except ZeroDivisionError as e:
@@ -124,6 +130,7 @@ def gamma(k):
         return 9999
     data['gamma_'+str(k)] = result
     print('gamma_'+str(k)+'finish')
+    return result
 
 def epsilon(k,p):
     global data
@@ -133,6 +140,7 @@ def epsilon(k,p):
     result = qp*(beta(k) - alpha(k))
     data['epsilon_'+str(k)] = result
     print('epsilon_'+str(k)+'finish')
+    return result
 
 def epsilon_prime(k,p):
     global data
@@ -142,6 +150,7 @@ def epsilon_prime(k,p):
     result = qp*(gamma(k) - beta(k))
     data['epsilon_prime_'+str(k)] = result
     print('epsilon_prime_'+str(k)+'finish')
+    return result
 
 ## logic
 
@@ -172,13 +181,13 @@ data['t0'] = t0
 
 for i in range(1,10):
     print(i)
-    print(f"f{i}",f(i))
-    print(f"g{i}",g(i))
-    print(f"h{i}",h(i))
-    print(f"t{i}",t(i))
-    print(f"alpha_{i}",alpha(i))
-    print(f"beta_{i}",beta(i))
-    print(f"gamma_{i}",gamma(i))
+    # print(f"f{i}",f(i))
+    # print(f"g{i}",g(i))
+    # print(f"h{i}",h(i))
+    # print(f"t{i}",t(i))
+    # print(f"alpha_{i}",alpha(i))
+    # print(f"beta_{i}",beta(i))
+    # print(f"gamma_{i}",gamma(i))
     print(f"epsilon_{i}",epsilon(i,p))
     print(f"epsilon_prime_{i}",epsilon_prime(i,p))
     print("=========")
@@ -191,54 +200,4 @@ with open(filename, 'w') as json_file:
 
 
 
-def calculate_for_p(p, n, use_old=True):
-    global data
-    # 1. Check the file save parameter exist, if not, generate the json file
-    safe_p = math.floor(p * 100000) / 100000  # 將所有浮點數四
-    status = check_oldfile(safe_p)
 
-    # 2. Initialize the dynamic programming set
-    if (status and use_old):
-        data = load_old_parameter(p)
-    else:
-        data = {}
-
-    # 3. Initialize base cases
-    f0 = (1-p)**3
-    g0 = ((1-p)**2)*p
-    h0 = 0
-    t0 = 0
-
-    data['f0'] = f0
-    data['g0'] = g0
-    data['h0'] = h0
-    data['t0'] = t0
-
-    # 4. Calculate for each i
-    for i in range(1, n+1):
-        print(f"Calculating for i={i}, p={p}")
-        f(i)
-        g(i)
-        h(i)
-        t(i)
-        alpha(i)
-        beta(i)
-        gamma(i)
-        epsilon(i, p)
-        epsilon_prime(i, p)
-        print("=========")
-
-    # 5. Save results
-    filename = f"data/{safe_p}.json"
-    with open(filename, 'w') as json_file:
-        json.dump(data, json_file, indent=4)
-
-    # 6. Return some key results if needed
-    return {
-        f"f{n}": data[f'f{n}'],
-        f"g{n}": data[f'g{n}'],
-        f"h{n}": data[f'h{n}'],
-        f"t{n}": data[f't{n}'],
-        f"epsilon_{n}": data[f'epsilon_{n}'],
-        f"epsilon_prime_{n}": data[f'epsilon_prime_{n}']
-    }

@@ -4,8 +4,8 @@ import math
 
 # parameter setting
 n = 5               # which SG_n
-p = 0.01             # the probability to release path
-use_old = True      # whether clean old parameter setting
+p = 0.5             # the probability to release path
+use_old = False      # whether clean old parameter setting
 
 # function
 ## tool
@@ -39,7 +39,12 @@ def f(k):
     if 'f'+str(k) in data:
         return data['f'+str(k)]
     fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
-    result = fp**3 + 6*(gp)*(fp**2) + 3*(hp)*(fp**2) + 9*(gp**2)*(fp) + 6*(fp)*(hp)*(gp) + 2*(gp**3)
+    #result = fp**3 + 6*(gp)*(fp**2) + 3*(hp)*(fp**2) + 9*(gp**2)*(fp) + 6*(fp)*(hp)*(gp) + 2*(gp**3)
+    result = (fp**3)/(1-p)**3 + 3*(fp)*(gp**2)/(p*(1-p)**2) + 3*(gp**2)*(hp)/(p**2 * (1-p)) + (hp**3)/p**3
+    print("(fp**3)/(1-p)**3" ,(fp**3)/(1-p)**3)
+    print('(1-p)**3',(1-p)**3)
+    print("fp**3",fp**3)
+    print('(1-p)**6',(1-p)**6)
     data['f'+str(k)] = result
     print('f'+str(k)+'finish')
 
@@ -49,8 +54,9 @@ def g(k):
     if 'g'+str(k) in data:
         return data['g'+str(k)]
     fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
-    result = (fp**2)*(gp) + 4*(fp)*(gp**2) + 2*(fp**2)*(hp) + (tp)*(fp**2) + 2*(fp)*(gp)*(hp) + 6*(fp)*(gp)*(hp) + \
-    3*(gp**3) + 2*(fp)*(gp)*(tp) + 2*(fp)*(hp**2) + 2*(gp**2)*(hp) + 2*(gp**2)*(hp)
+    #result = (fp**2)*(gp) + 4*(fp)*(gp**2) + 2*(fp**2)*(hp) + (tp)*(fp**2) + 2*(fp)*(gp)*(hp) + 6*(fp)*(gp)*(hp) + \
+    #3*(gp**3) + 2*(fp)*(gp)*(tp) + 2*(fp)*(hp**2) + 2*(gp**2)*(hp) + 2*(gp**2)*(hp)
+    result = (fp**2)*(gp)/ (1-p)**3 + 2*(fp)*(gp)*(hp)/ (p* (1-p)**2) + (gp**3)/(p* (1-p)**2) + 2*(gp)*(hp**2)/(p**2 * (1-p)) + (gp**2)*(tp)/(p**2 * (1-p)) + (hp**2)*(tp)/p**3
     data['g'+str(k)] = result
     print('g'+str(k)+'finish')
 
@@ -60,8 +66,9 @@ def h(k):
     if 'h'+str(k) in data:
         return data['h'+str(k)]
     fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
-    result = (fp)*(gp**2) + 4*(fp)*(gp)*(hp) + 2*(gp**3) + 2*(fp)*(gp)*(tp) + (gp**2)*(hp) + 6*(gp**2)*(hp) + \
-    3*(fp)*(hp**2) + 2*(gp**2)*(tp) + 2*(gp)*(hp**2) + 2*(fp)*(hp)*(tp) + 2*(gp)*(hp**2)
+    #result = (fp)*(gp**2) + 4*(fp)*(gp)*(hp) + 2*(gp**3) + 2*(fp)*(gp)*(tp) + (gp**2)*(hp) + 6*(gp**2)*(hp) + \
+    #3*(fp)*(hp**2) + 2*(gp**2)*(tp) + 2*(gp)*(hp**2) + 2*(fp)*(hp)*(tp) + 2*(gp)*(hp**2)
+    result = (fp)*(gp**2)/(1-p)**3 + (fp)*(hp**2)/(p*(1-p)**2) + 2*(gp**2)*(hp)/(p*(1-p)**2) + (hp**3)/(p**2 * (1-p)) + 2*(gp)*(hp)*(tp)/(p**2 * (1-p)) + (hp)*(tp**2)/p**3
     data['h'+str(k)] = result
     print('h'+str(k)+'finish')
 
@@ -71,7 +78,8 @@ def t(k):
     if 't'+str(k) in data:
         return data['t'+str(k)]
     fp,gp,hp,tp = f(k-1),g(k-1),h(k-1),t(k-1)
-    result = (gp**3) + 6*(gp**2)*(hp) + 3*(gp**2)*(tp) + 9*(gp)*(hp**2) + 6*(gp)*(hp)*(tp) + 2*(hp**3)
+    #result = (gp**3) + 6*(gp**2)*(hp) + 3*(gp**2)*(tp) + 9*(gp)*(hp**2) + 6*(gp)*(hp)*(tp) + 2*(hp**3)
+    result = (gp**3)/(1-p)**3 + 3*(gp)*(hp**2)/(p * (1-p)**2) + 3*(hp**2)*(tp)/(p**2 * (1-p)) + (tp**3)/p**3
     data['t'+str(k)] = result
     print('t'+str(k)+'finish')
 
@@ -147,6 +155,11 @@ else:
     data = {}
 
 # 3. Just run the target
+# f0 = (1-p)**3
+# g0 = ((1-p)**2)*p
+# h0 = 0
+# t0 = 0
+
 f0 = (1-p)**3
 g0 = ((1-p)**2)*p
 h0 = 0

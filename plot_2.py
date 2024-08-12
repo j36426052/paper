@@ -16,10 +16,9 @@ def plot_graphs(p_values):
     plt.figure(figsize=(20, 15))
 
     for i, y_axis in enumerate([
-        "(1-p)/p * alpha(n) * beta(n)",
-        "(1-p)/p * beta(n) * gamma(n)",
-        "epsilon(n)",
-        "epsilon_prime(n)"
+        "alpha(n)",
+        "beta(n)",
+        "gamma(n)"
     ], 1):
         plt.subplot(2, 2, i)
         for n in range(1, 6):
@@ -29,14 +28,12 @@ def plot_graphs(p_values):
                 data = load_json(p)
                 if data is None:
                     continue
-                if y_axis == "(1-p)/p * alpha(n) * beta(n)":
-                    y = ((1 - p) / p) * data[f'alpha_{n}'] * data[f'beta_{n}']
-                elif y_axis == "(1-p)/p * beta(n) * gamma(n)":
-                    y = ((1 - p) / p) * data[f'beta_{n}'] * data[f'gamma_{n}']
-                elif y_axis == "epsilon(n)":
-                    y = data[f'epsilon_{n}']
-                else:  # epsilon_prime(n)
-                    y = data[f'epsilon_prime_{n}']
+                if y_axis == "alpha(n)":
+                    y = data[f'alpha_{n}']
+                elif y_axis == "beta(n)":
+                    y = data[f'beta_{n}']
+                else:  # gamma(n)
+                    y = data[f'gamma_{n}']
 
                 y_values.append(y)
             plt.plot([p / 100 for p in p_values], y_values, label=f'n={n}')  # 調整 x 軸
@@ -47,14 +44,12 @@ def plot_graphs(p_values):
         plt.legend()
         plt.grid(True)
 
-        # 設置 x 軸範圍為 0 到 1，y 軸範圍為 0 到 1（除了 epsilon(n)）
+        # 設置 x 軸範圍為 0 到 1，y 軸範圍根據具體情況調整
         plt.xlim(0, 1)
-        if y_axis != "epsilon(n)" and y_axis != "epsilon_prime(n)":
-            plt.ylim(0, 1)
-        
+        plt.ylim(0, 10)  # 根據需要調整 y 軸範圍
 
     plt.tight_layout()
-    plt.savefig(f"{y_axis}.png")
+    plt.savefig("alpha_beta_gamma.png")  # 儲存圖形
     plt.show()
 
 # 生成 p 值範圍

@@ -93,7 +93,7 @@ def main(n, p, use_old):
         if 'epsilon_'+str(k) in data:
             return data['epsilon_'+str(k)]
         qp = (1-p)/p
-        result = qp*(beta(k) - alpha(k))
+        result = qp*(alpha(k) - alpha(k))
         data['epsilon_'+str(k)] = result
         return result
 
@@ -101,7 +101,7 @@ def main(n, p, use_old):
         if 'epsilon_prime_'+str(k) in data:
             return data['epsilon_prime_'+str(k)]
         qp = (1-p)/p
-        result = qp*(gamma(k) - beta(k))
+        result = qp*(beta(k) - gamma(k))
         data['epsilon_prime_'+str(k)] = result
         return result
 
@@ -113,15 +113,15 @@ def main(n, p, use_old):
     else:
         data = {}
 
-    f0 = (1-p)**3
-    g0 = ((1-p)**2)*p
-    h0 = 0
-    t0 = 0
+    f1= (1-p)**9 + 3 * p * (1-p)**8
+    g1= 2 * p * (1-p)**8 + 2 * p**2 * (1-p)**7
+    h1 = 3 * p**2 * (1-p)**7
+    t1 = 2 * p**3 * (1-p)**6
 
-    data['f0'] = f0
-    data['g0'] = g0
-    data['h0'] = h0
-    data['t0'] = t0
+    data['f1'] = f1
+    data['g1'] = g1
+    data['h1'] = h1
+    data['t1'] = t1
 
     for i in range(1, n+1):
         print(f"epsilon_{i}", epsilon(i, p))

@@ -1,0 +1,6 @@
+\draw[dash pattern=on 1pt off 2pt, very thick, blue] (3,{3*sqrt(3)}) -- (5,{3*sqrt(3)});
+\draw[very thick,black] (7,{3*sqrt(3)}) -- (9,{3*sqrt(3)});
+\draw[dash pattern=on 1pt off 2pt, very thick, blue] (9,{3*sqrt(3)}) -- (8,{2*sqrt(3)});
+\draw[very thick,black] (7,{sqrt(3)}) -- (6,0);
+\draw[dash pattern=on 1pt off 2pt, very thick, blue] (6,0) -- (5,{sqrt(3)});
+\draw[very thick,black] (4,{2*sqrt(3)}) -- (3,{3*sqrt(3)});
